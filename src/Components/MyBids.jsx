@@ -1,18 +1,23 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { use, useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../Context/AuthContext';
 import Swal from 'sweetalert2';
 
 const MyBids = () => {
 
-  const { user } = use(AuthContext);
+  const { user } = useContext(AuthContext);
   const [bids, setBids] = useState([]);
 
   useEffect(() => {
     if (user?.email) {
-      fetch(`http://localhost:3000/bids?email=${user.email}`).then(res => res.json()).then(data => {
-        console.log(data);
-        setBids(data);
+      fetch(`http://localhost:3000/bids?email=${user.email}`, {
+        headers: {
+          authorization: `Bearer ${user.accessToken}`
+        }
       })
+        .then(res => res.json()).then(data => {
+          console.log(data);
+          setBids(data);
+        })
     }
   }, [user?.email])
 
